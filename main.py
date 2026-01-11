@@ -1,4 +1,4 @@
-import os
+import argparse, os
 from dotenv import load_dotenv
 from google import genai
 
@@ -29,9 +29,13 @@ def print_response(prompt, response):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Toy AI agent")
+    parser.add_argument("user_prompt", type=str, help="User prompt")
+    args = parser.parse_args()
+
     client = genai.Client(api_key=api_key)
     
-    prompt = "Hard coded string as a placeholder"
+    prompt = args.user_prompt
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
