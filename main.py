@@ -1,6 +1,7 @@
 import argparse, os
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 
 load_dotenv()
@@ -18,30 +19,37 @@ def get_token_counts(response):
     return prompt_token_count, response_token_count
 
 
-def print_response(prompt, response):
+def print_response(prompt, response, verbose):
     prompt_token_count, candidates_token_count = get_token_counts(response)
 
-    print(f"User prompt: {prompt}")
-    print(f"Prompt tokens: {prompt_token_count}")
-    print(f"Response tokens: {candidates_token_count}")
-    print(f"Response:")
-    print(response.text)
+    if verbose:
+        print(f"User prompt: {prompt}")
+        print(f"Prompt tokens: {prompt_token_count}")
+        print(f"Response tokens: {candidates_token_count}")
+        print(f"Response:")
+        print(response.text)
+    else:
+        print(f"Response:")
+        print(response.text)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Toy AI agent")
     parser.add_argument("user_prompt", type=str, help="User prompt")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
 
     client = genai.Client(api_key=api_key)
     
+    messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
+    
     prompt = args.user_prompt
     response = client.models.generate_content(
         model="gemini-2.5-flash",
-        contents=prompt
+        contents=messages
     )
 
-    print_response(prompt, response)
+    print_response(prompt, response, args.verbose)
 
 
 if __name__ == "__main__":
