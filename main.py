@@ -9,6 +9,25 @@ if api_key is None:
     raise RuntimeError("GEMINI API KEY was not found, make sure that it is defined in .env file.")
 
 
+def get_token_counts(response):
+    if response.usage_metadata is None:
+        raise RuntimeError("Promt and response tokens are empty, likely a failed API request.")
+    
+    prompt_token_count = response.usage_metadata.prompt_token_count
+    response_token_count = response.usage_metadata.candidates_token_count
+    return prompt_token_count, response_token_count
+
+
+def print_response(prompt, response):
+    prompt_token_count, candidates_token_count = get_token_counts(response)
+
+    print(f"User prompt: {prompt}")
+    print(f"Prompt tokens: {prompt_token_count}")
+    print(f"Response tokens: {candidates_token_count}")
+    print(f"Response:")
+    print(response.text)
+
+
 def main():
     client = genai.Client(api_key=api_key)
     
@@ -17,7 +36,9 @@ def main():
         model="gemini-2.5-flash",
         contents=prompt
     )
-    print(response.text)
+
+    print_response(prompt, response)
+
 
 if __name__ == "__main__":
     main()
