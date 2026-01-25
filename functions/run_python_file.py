@@ -19,11 +19,11 @@ def run_python_file(working_directory, file_path, args=None):
             error_string = f'Error: File not found or is not a regular file: "{file_path}"'
             return error_string
 
-        if not target_directory[-3] == ".py":
+        if not target_directory.endswith(".py"):
             error_string = f'Error: "{file_path}" is not a Python file'
             return error_string
 
-        command = ["python3", absolute_path]
+        command = ["python3", target_directory]
         if args:
             command.extend(args)
 
@@ -33,15 +33,15 @@ def run_python_file(working_directory, file_path, args=None):
         output = ""
         if process.returncode:
             output += f"Process exited with code {process.returncode}\n"
-        if len(process.stdout) == 0 or len(process.stderr) == 0:
-            output += f"No output produced"
-        if len(process.stdout) > 0:
-            output += f"STDOUT: {process.stdout}"
-        if len(process.stderr) > 0:
-            output += f"STDERR: {process.stderr}"
+        elif process.stdout:
+            output += f"STDOUT: {process.stdout}\n"
+        elif process.stderr:
+            output += f"STDERR: {process.stderr}\n"
+        else:
+            output += f"No output produced\n"
 
         return output
 
     except Exception as e:
-        error_string = f'Error: {e} occurred while trying to execute python file'
+        error_string = f'Error: {e} occurred while trying to execute python file\n'
         return error_string
