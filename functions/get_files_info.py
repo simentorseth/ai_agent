@@ -9,10 +9,12 @@ def get_files_info(working_dir, dir="."):
         target_dir_is_dir = os.path.isdir(target_directory)
         
         if not target_dir_is_dir:
-            raise ValueError(f'Error: "{target_directory}" is not a directory')
+            error_string = f'Error: "{target_directory}" is not a directory'
+            return error_string
         
         if not target_dir_is_valid:
-            raise ValueError(f'Error: Cannot list "{target_directory}" as it is outside the permitted working directory')
+            error_string = f'Error: Cannot list "{target_directory}" as it is outside the permitted working directory'
+            return error_string
         
         dir_items = os.listdir(target_directory)
         output = ""
@@ -26,8 +28,5 @@ def get_files_info(working_dir, dir="."):
         
         return output
     except OSError as e:
-        print(f"Error: {e} occurred while getting files.")
-
-
-files = get_files_info("calculator",".")
-print(files)
+        error_string = f"Error: {e} occurred while getting files."
+        return error_string
