@@ -14,7 +14,7 @@ def write_file(working_directory, file_path, content):
             error_string = f'Error: Cannot read "{file_path}" as it is outside the permitted working directory'
             return error_string
 
-        if not target_dir_is_dir:
+        if target_dir_is_dir:
             error_string = f'Error: Cannot write to "{file_path}" as it is a directory'
             return error_string
 
@@ -28,3 +28,4 @@ def write_file(working_directory, file_path, content):
 
     except Exception as e:
         error_string = f"Error: {e} occurred while getting files."
+        return error_string
